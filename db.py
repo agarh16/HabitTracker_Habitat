@@ -34,7 +34,7 @@ def create_tables(db):
     cur.execute("""CREATE TABLE IF NOT EXISTS streak (
         habit_name TEXT,
         streak INT,
-        FOREIGN KEY (habit_name) REFERENCES tracker(habit_name)""")
+        FOREIGN KEY (habit_name) REFERENCES tracker(habit_name))""")
 
     db.commit()
 

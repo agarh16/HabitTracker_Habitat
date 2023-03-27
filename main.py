@@ -6,7 +6,7 @@ from analyse import *
 
 def cli():
     db = get_db()
-    questionary.confirm("""Welcome to Habit@, the place for your habits to call home.
+    questionary.confirm("""Welcome to Habitat, the place for your habits to call home.
     Are you ready to start?""").ask()
 
     stop = False
