@@ -1,23 +1,23 @@
-# My Habit Tracker App / Project
+# Habitat
 
-a neat little description of the project
+Habitat is a habit tracker project. 
 
-## Features?
+## Features
 bla
 
-##Instalation
+## Instalation
 ```
 pip install -r requirements.txt
 ```
 
-###Usage
+## Usage
 Start 
 ```
 python main.py
 ```
 and follow the instructions on screen
 
-###Tests
+## Tests
 ```
 pytest . 
 ```
