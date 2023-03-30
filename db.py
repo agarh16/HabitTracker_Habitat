@@ -27,14 +27,15 @@ def create_tables(db):
         created DATE)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS tracker (
+        name TEXT,
         date TEXT,
-        habit_name TEXT,
-        FOREIGN KEY (habit_name) REFERENCES habit(name))""")
+        PRIMARY KEY (name, date)
+        FOREIGN KEY (name) REFERENCES habit(name))""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS streak (
-        habit_name TEXT,
+        name TEXT,
         streak INT,
-        FOREIGN KEY (habit_name) REFERENCES tracker(habit_name))""")
+        FOREIGN KEY (name) REFERENCES tracker(name))""")
 
     db.commit()
 
@@ -49,6 +50,10 @@ def add_habit(db, name, frequency, created):
     :return:
     """
     cur = db.cursor()
+    if not name:
+        raise ValueError
+    elif not created:
+        created = str(date.today())
     cur.execute("INSERT INTO habit VALUES(?, ?, ?)", (name, frequency, created))
     db.commit()
 
@@ -64,18 +69,26 @@ def increment_habit(db, name, event_date=None):
     cur = db.cursor()
     if not event_date:
         event_date = str(date.today())
-    cur.execute("INSERT INTO tracker VALUES(?, ?)", (event_date, name))
+    cur.execute("INSERT INTO tracker VALUES(?, ?)", (name, event_date))
     db.commit()
 
 
-def get_habits_data(db, name):
+# def increment_streak(db, name, event_date=None)
+#     cur = db.cursor()
+#     if not event_date:
+#         event_date = str(date.today())
+#     cur.execute("INSERT INTO streak VALUES(?, ?)", (name, event_date))
+#     db.commit()
+
+def get_habits_data(db):
     """
 
+    :param name:
     :param db: An initialized sqlite3 database connection.
     :return:
     """
     cur = db.cursor()
-    cur.execute("SELECT * FROM habit WHERE name=?", (name,))
+    cur.execute("SELECT * FROM habit")
     return cur.fetchall()
 
 def get_tracker_data(db, habit_name):
@@ -88,6 +101,11 @@ def get_tracker_data(db, habit_name):
     cur.execute("SELECT * FROM tracker WHERE habit_name=?", (habit_name,))
     return cur.fetchall()
 
+
+def get_streak_data(db, habit_name):
+    cur = db.cursor()
+    cur.execute("SELECT * FROM streak WHERE habit_name=?", (habit_name,))
+    return cur.fetchall()
 
 # def get_same_frequency_data(db, frequency):
 #     """
