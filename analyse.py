@@ -14,12 +14,11 @@ def all_habits(db):
 
 def all_habits_same_frequency(db):
     """
-    Returns all the habits with the same frequency (daily or weekly).
+    Returns all the habits with the same frequency from the habits table (daily or weekly).
     :param db: An initialized sqlite3 database connection.
     :return:
     """
-    data = list(filter(get_habits_data()))
-
+    pass
 
 def longest_streak_of_all(db):
     """
@@ -27,13 +26,14 @@ def longest_streak_of_all(db):
     :param db: An initialized sqlite3 database connection.
     :return:
     """
-    pass
+    data = get_tracker_data(db)
+    return data
 
-
-def longest_streak_of_habit(db):
+def longest_streak_of_habit(db, habit_name):
     """
     Returns the longest streak of a given habit.
     :param db: An initialized sqlite3 database connection.
     :return:
     """
-    pass
+    data = get_tracker_data(db, habit_name)
+    return data

@@ -36,7 +36,7 @@ def main_menu():
                     name = name.casefold()
                     frequency = questionary.select("What is the frequency of your habit?",
                                                    choices=["daily", "weekly"]).ask()
-                    created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
+                    created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask() # I need to rais exception for it to be a date type
                     habit = Habit(name, frequency, created)
                     habit.store(db)
                 except ValueError:
@@ -72,29 +72,33 @@ def main_menu():
 
     elif choice == "Increment habit":
         name = questionary.text("What's the name of your habit?").ask() #this
-        name = name.casefold()
-        print(name)
-        # data = get_habits_data(db) #list of all tuples
-        # habit_to_increment = (list(filter(lambda x: x[0] == name, data)))
-        # habit_to_increment = habit_to_increment[0]
-        # print(habit_to_increment)
-        # if name in names:
-        #     incremented_habit = Habit(name, "no description", "no description")
-        #     incremented_habit.add_event(db, date=None)
-        #     print(get_tracker_data(db, incremented_habit))
+        data = get_habits_data(db) #list of all tuples
+        habit_to_increment = (list(filter(lambda x: x[0] == name.casefold(), data)))
+        habit_to_increment = habit_to_increment[0]
+        print(">>>", habit_to_increment)
+        habit = Habit(habit_to_increment[0], habit_to_increment[1], habit_to_increment[2])
+        streak = habit.increment()
+        print(">>>", streak)
+        date_checked = questionary.text("Type the date you completed the habit (YYYY-MM-DD)").ask()
+        habit.add_event(db, streak, date_checked)
+
     elif choice == "Analyse habit(s)":
         analyse = questionary.select("What do you want to see?",
                                      choices=["List of all habits", "All habits with the same frequency",
                                               "Longest streak of all habits",
-                                              "Longest streak of a given habit"]).ask()
+                                              "Longest streak of a given habit", "Back to main menu"]).ask()
         if analyse == "List of all habits":
             print(*all_habits(db), sep='\n')
-        if analyse == "All habits with the same frequency":
+        elif analyse == "All habits with the same frequency":
             print(all_habits_same_frequency(db))
-        if analyse == "Longest streak of all habits":
-            print(longest_streak_of_all(db))
-        if analyse == "Longest streak of a given habit":
-            print(longest_streak_of_habit(db))
+        elif analyse == "Longest streak of all habits":
+            habit_name = questionary.text("Type the name of your habit.").ask()
+            print(*longest_streak_of_all(db, habit_name), sep='\n')
+        elif analyse == "Longest streak of a given habit":
+            habit_name = questionary.text("Type the name of your habit.").ask()
+            print(longest_streak_of_habit(db, habit_name))
+        else:
+            main_menu()
     else:
         stop = True
         exit_habitat()

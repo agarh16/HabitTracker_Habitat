@@ -28,14 +28,15 @@ def create_tables(db):
 
     cur.execute("""CREATE TABLE IF NOT EXISTS tracker (
         name TEXT,
-        date TEXT,
-        PRIMARY KEY (name, date)
+        streak INT,
+        event_date DATE NOT NULL,
+        PRIMARY KEY (name, event_date),
         FOREIGN KEY (name) REFERENCES habit(name))""")
 
-    cur.execute("""CREATE TABLE IF NOT EXISTS streak (
-        name TEXT,
-        streak INT,
-        FOREIGN KEY (name) REFERENCES tracker(name))""")
+    # cur.execute("""CREATE TABLE IF NOT EXISTS streak (
+    #     name TEXT,
+    #     streak INT,
+    #     FOREIGN KEY (name) REFERENCES tracker(name))""")
 
     db.commit()
 
@@ -58,18 +59,19 @@ def add_habit(db, name, frequency, created):
     db.commit()
 
 
-def increment_habit(db, name, event_date=None):
+def increment_habit(db, name, streak, event_date=None, ):
     """
 
     :param db: An initialized sqlite3 database connection.
     :param name:
+    :param streak:
     :param event_date:
     :return:
     """
     cur = db.cursor()
     if not event_date:
-        event_date = str(date.today())
-    cur.execute("INSERT INTO tracker VALUES(?, ?)", (name, event_date))
+        event_date = date.today()
+    cur.execute("INSERT INTO tracker VALUES(?, ?, ?)", (name, streak, event_date))
     db.commit()
 
 
@@ -91,20 +93,20 @@ def get_habits_data(db):
     cur.execute("SELECT * FROM habit")
     return cur.fetchall()
 
-def get_tracker_data(db, habit_name):
+def get_tracker_data(db, name):
     """
 
     :param db: An initialized sqlite3 database connection.
     :return:
     """
     cur = db.cursor()
-    cur.execute("SELECT * FROM tracker WHERE habit_name=?", (habit_name,))
+    cur.execute("SELECT * FROM tracker WHERE name=?", (name,))
     return cur.fetchall()
 
 
 def get_streak_data(db, habit_name):
     cur = db.cursor()
-    cur.execute("SELECT * FROM streak WHERE habit_name=?", (habit_name,))
+    cur.execute("SELECT * FROM streak WHERE name=?", (name,))
     return cur.fetchall()
 
 # def get_same_frequency_data(db, frequency):
