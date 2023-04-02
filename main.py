@@ -1,7 +1,10 @@
+import datetime
 import sqlite3
 import questionary
 from habit import Habit
 from analyse import *
+
+
 
 def cli():
     answer = questionary.select("""Welcome to Habitat, the place for your habits to call home.
@@ -32,15 +35,17 @@ def main_menu():
         try:
             if habit_type == "New Habit":
                 try:
-                    name = questionary.text("What's the name of your habit?").ask()
-                    name = name.casefold()
+                    name = questionary.text("What's the name of your habit?", validate=lambda text: True if text.isalpha() else "Not a valid name. Please only letters.").ask()
                     frequency = questionary.select("What is the frequency of your habit?",
                                                    choices=["daily", "weekly"]).ask()
-                    created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask() # I need to rais exception for it to be a date type
-                    habit = Habit(name, frequency, created)
+                    date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
+
+                    habit = Habit(name.casefold(), frequency, date_created)
                     habit.store(db)
-                except ValueError:
+                except NameError:
                     print("Your habit was not saved because it doesn't have a name.")
+                    main_menu()
+                except ValueError:
                     main_menu()
 
             elif habit_type == "Predetermined habits":
@@ -51,16 +56,16 @@ def main_menu():
                 if predetermined_habit == "grocery shopping":
                     frequency = "weekly"
                     print("You chose a weekly habit.")
-                    created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
-                    habit = Habit(predetermined_habit, frequency, created)
+                    date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
+                    habit = Habit(predetermined_habit, frequency, date_created)
                     habit.store(db)
                     print("Your habit has been saved.")
                 elif predetermined_habit == "exercising" or predetermined_habit == "reading" or \
                         predetermined_habit == "writing" or predetermined_habit == "coding":
                     frequency = "daily"
                     print("You chose a daily habit.")
-                    created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
-                    habit = Habit(predetermined_habit, frequency, created)
+                    date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
+                    habit = Habit(predetermined_habit, frequency, date_created)
                     habit.store(db)
                     print("Your habit has been saved.")
                 else:
@@ -75,12 +80,12 @@ def main_menu():
         data = get_habits_data(db) #list of all tuples
         habit_to_increment = (list(filter(lambda x: x[0] == name.casefold(), data)))
         habit_to_increment = habit_to_increment[0]
-        print(">>>", habit_to_increment)
-        habit = Habit(habit_to_increment[0], habit_to_increment[1], habit_to_increment[2])
-        streak = habit.increment()
-        print(">>>", streak)
-        date_checked = questionary.text("Type the date you completed the habit (YYYY-MM-DD)").ask()
-        habit.add_event(db, streak, date_checked)
+        print(">>>", type(habit_to_increment[2]))
+        # habit = Habit(habit_to_increment[0], habit_to_increment[1], habit_to_increment[2])
+        # streak = habit.increment()
+        # print(">>>", streak)
+        # date_checked = questionary.text("Type the date you completed the habit (YYYY-MM-DD)").ask()
+        # habit.add_event(db, streak, date_checked)
 
     elif choice == "Analyse habit(s)":
         analyse = questionary.select("What do you want to see?",
@@ -110,3 +115,4 @@ def return_to_main():
 
 if __name__ == '__main__':
     cli()
+

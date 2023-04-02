@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import date
+import datetime
 
 
 def get_db(name="main.db"):
@@ -41,25 +41,32 @@ def create_tables(db):
     db.commit()
 
 
-def add_habit(db, name, frequency, created):
+def add_habit(db, name, frequency, date_created):
     """
 
     :param db: An initialized sqlite3 database connection.
     :param name:
     :param frequency:
-    :param created:
+    :param date_created:
     :return:
     """
     cur = db.cursor()
     if not name:
-        raise ValueError
-    elif not created:
-        created = str(date.today())
-    cur.execute("INSERT INTO habit VALUES(?, ?, ?)", (name, frequency, created))
+        raise NameError
+    elif not date_created:
+        date_created = datetime.date.today()
+    else:
+        try:
+            date_created = datetime.datetime.strptime(date_created, '%Y-%m-%d')
+            date_created = date_created.date() #To return a date instance without the time
+        except ValueError:
+            print("Not a valid date. Try this format: YYYY-MM-DD.")
+            raise ValueError
+    cur.execute("INSERT INTO habit VALUES(?, ?, ?)", (name, frequency, date_created))
     db.commit()
 
 
-def increment_habit(db, name, streak, event_date=None, ):
+def increment_habit(db, name, streak: int, event_date: datetime.date = None ):
     """
 
     :param db: An initialized sqlite3 database connection.
@@ -70,7 +77,7 @@ def increment_habit(db, name, streak, event_date=None, ):
     """
     cur = db.cursor()
     if not event_date:
-        event_date = date.today()
+        event_date = datetime.date.today()
     cur.execute("INSERT INTO tracker VALUES(?, ?, ?)", (name, streak, event_date))
     db.commit()
 
@@ -104,7 +111,7 @@ def get_tracker_data(db, name):
     return cur.fetchall()
 
 
-def get_streak_data(db, habit_name):
+def get_streak_data(db, name):
     cur = db.cursor()
     cur.execute("SELECT * FROM streak WHERE name=?", (name,))
     return cur.fetchall()

@@ -1,10 +1,9 @@
 from db import add_habit, increment_habit
-from datetime import date
-
+import datetime
 
 class Habit:
 
-    def __init__(self, name: str, frequency: str, created: date):
+    def __init__(self, name: str, frequency: str, date_created: datetime.date):
         """Habit class to create habits. It has a name, frequency, date of creation and a count(checked)
         once it is checked off. The checked will be added to the tracker table.
 
@@ -14,8 +13,9 @@ class Habit:
         """
         self.name = name
         self.frequency = frequency
-        self.created = created
-        self.checked = 0
+        self.date_created = date_created
+        self.checked_date = datetime.date.today().strftime("Y%/%m/%d")
+        self.streak = 0
 
     def increment(self):
         """
@@ -25,13 +25,13 @@ class Habit:
         # if the habit was not broken (iterate through list of habits and the dates):
         #     then add one to the steak att in the tracker table.
 
-        return self.checked + 1
+        return self.streak + 1
 
     def reset(self):
-        self.checked = 0
+        self.streak = 0
 
     def __str__(self):
-        return f"{self.name}: {self.checked}, created on: {self.created}"
+        return f"{self.name}: {self.streak}, date created: {self.date_created}"
 
     def store(self, db):
         """
@@ -39,10 +39,9 @@ class Habit:
         and date created.
         :param db: Connection to the DB.
         """
-        add_habit(db, self.name, self.frequency, self.created)
+        add_habit(db, self.name, self.frequency, self.date_created)
 
-    def add_event(self, db, streak, event_date: date = None):
+    def add_event(self, db, streak, event_date: datetime.date = None):
         increment_habit(db, self.name, streak, event_date)
 
-        #CHANGED SOMETHING HERE: From date: str=None to date = None
 
