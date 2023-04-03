@@ -7,6 +7,10 @@ import analyse
 class Test_Habit:
 
     def setup_method(self):
+        """
+
+        :return:
+        """
         self.db = get_db("test.db")
         add_habit(self.db, "test_habit_1", "daily", "2023-02-03")
         increment_habit(self.db, "test_habit_1", "2023-02-04")
@@ -16,6 +20,10 @@ class Test_Habit:
         increment_habit(self.db, "test_habit_1", "2023-02-08")
 
     def test_habit(self):
+        """
+
+        :return:
+        """
         habit = Habit("test_habit_1", "daily")
 
         habit.increment()
@@ -31,5 +39,9 @@ class Test_Habit:
         pass
 
     def teardown_method(self):
+        """
+
+        :return:
+        """
         import os
         os.remove("test.db")
