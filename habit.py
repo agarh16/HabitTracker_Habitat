@@ -1,5 +1,6 @@
-from db import add_habit, increment_habit, delete_habit, get_tracker_data
+from db import add_habit, increment_habit, delete_habit, get_streak_data
 from datetime import datetime, date
+
 
 class Habit:
 
@@ -14,7 +15,6 @@ class Habit:
         self.name = name
         self.frequency = frequency
         self.date_created = date_created
-        self.checked_date = date.today().strftime("Y%/%m/%d")
         self.streak = 0
 
     def increment(self, db):
@@ -22,7 +22,12 @@ class Habit:
         This function increments the checked attribute by 1.
 
         """
+        data = get_streak_data(db, self.name)
+        self.streak = data[-1][-1]
+        print(">>>self.streak", self.streak)
         self.streak += 1
+        return self.streak
+        print(">>>increment", self.streak)
 
     def reset(self):
         """
@@ -42,7 +47,7 @@ class Habit:
         """
         add_habit(db, self.name, self.frequency, self.date_created)
 
-    def add_event(self, db, streak, event_date: date = None):
+    def add_event(self, db, event_date: date = None):
         """
         If the habit was not broken then the increment_streak will be added to the one logged in the tracker table.
         If the habit is broken then the streak will result in 1 and it will be logged as such in the tracker table.
@@ -50,11 +55,11 @@ class Habit:
         A broken weekly habit means that the habit was not logged in the consecutive week.
         The information is logged in the tracker table.
         :param db: An initialized sqlite3 database connection.
-        :param streak: The number of consecutive days or weeks a habit has been logged without being broken.
         :param event_date: The date in which a habit is checked off.
 
         """
-        increment_habit(db, self.name, streak, event_date)
+        increment_habit(db, self.name, self.streak, event_date)
+
 
     def delete_habit(self, db, name):
         """

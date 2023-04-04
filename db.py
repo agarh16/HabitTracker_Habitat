@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime, date
 
+
 def get_db(name="main.db"):
     """
     Creates the database. As a default it creates the "main" database.
@@ -61,7 +62,7 @@ def add_habit(db, name, frequency, date_created):
     db.commit()
 
 
-def increment_habit(db, name, streak: int, event_date: date = None ):
+def increment_habit(db, name, streak: int, event_date: date = None):
     """
 
     :param db: An initialized sqlite3 database connection.
@@ -90,7 +91,6 @@ def increment_habit(db, name, streak: int, event_date: date = None ):
 def get_habits_data(db):
     """
 
-    :param name:
     :param db: An initialized sqlite3 database connection.
     :return:
     """
@@ -98,10 +98,12 @@ def get_habits_data(db):
     cur.execute("SELECT * FROM habit")
     return cur.fetchall()
 
+
 def get_tracker_data(db, name):
     """
 
     :param db: An initialized sqlite3 database connection.
+    :param name:
     :return:
     """
     cur = db.cursor()
@@ -151,7 +153,9 @@ def delete_habit(db, name):
     """
     cur = db.cursor()
     cur.execute("DELETE FROM habit WHERE name=?", (name,))
+    cur.execute("DELETE FROM tracker WHERE name=?", (name,))
     db.commit()
+    cur.close()
 
 
 def check_date_format(event_date):
@@ -167,3 +171,38 @@ def check_date_format(event_date):
     except ValueError:
         print("Not a valid date. Try this format: YYYY-MM-DD.")
         raise ValueError
+
+
+def is_habit_there(db, name):
+    """
+
+    :param db: An initialized sqlite3 database connection.
+    :param name: Name of the habit to check if exists.
+    :return: The habit that matches with the name as a tuple inside a list.
+    """
+    data = get_habits_data(db)  # list of all tuples
+    habit_to_search = (list(filter(lambda x: x[0] == name.casefold(),
+                                       data)))  # Compares all habits names in the table with the name variable
+    if habit_to_search:
+        return habit_to_search
+    else:
+        print("There is no habit with this name.")
+        raise NameError
+
+
+def get_streak_data(db, name):
+    """
+    Gets the streaks from the tracker table
+    :param db:
+    :param name:
+    :return:
+    """
+    cur = db.cursor()
+    cur.execute("SELECT streak FROM tracker WHERE name=?", (name, ))
+    return cur.fetchall()
+
+
+def get_frequency(db, name):
+    cur = db.cursor()
+    cur.execute("SELECT frequency FROM habit WHERE name=?", (name,))
+    return cur.fetchall()
