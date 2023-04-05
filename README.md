@@ -29,7 +29,7 @@ Questionary - For a cleaner CLI
 pip install -r requirements.txt
 ```
 
-## Usage
+## Usage 
 
 After installing the packages requires start the program with: 
 ```

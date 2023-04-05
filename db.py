@@ -162,7 +162,6 @@ def check_date_format(event_date=None):
         except ValueError:
             print("Not a valid date. Try this format: YYYY-MM-DD.")
             raise ValueError
-    return event_date
 
 def is_habit_there(db, name):
     """
