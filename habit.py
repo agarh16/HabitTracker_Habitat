@@ -1,5 +1,5 @@
 from db import add_habit, increment_habit, delete_habit, get_streak_data
-from datetime import datetime, date
+from datetime import date
 
 
 class Habit:
@@ -27,7 +27,6 @@ class Habit:
         print(">>>self.streak", self.streak)
         self.streak += 1
         return self.streak
-        print(">>>increment", self.streak)
 
     def reset(self):
         """

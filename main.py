@@ -1,4 +1,6 @@
 import sqlite3
+from datetime import datetime
+
 import questionary
 from analyse import *
 
@@ -33,7 +35,6 @@ def main_menu():
     The program connects to the main database to get the habit and tracker tables.
     """
     from habit import Habit, delete_habit
-    from datetime import datetime
     from db import get_db, get_habits_data, get_tracker_data, check_date_format, is_habit_there
 
     db = get_db()
@@ -112,27 +113,55 @@ def main_menu():
             print(">>>", habit_to_increment)
             habit = Habit(habit_to_increment[0][0], habit_to_increment[0][1], habit_to_increment[0][2])
             print(">>>name", habit)
-            if habit_to_increment:  # If True
-                data = get_tracker_data(db, name)
-
-                date_to_compare = data[-1][2] # Gets the last day logged
-                print(">>>datetocompare", date_to_compare)
+            if habit_to_increment[0][1] == "daily":  # If True and frequency is daily
                 event_date = questionary.text("Type your date (YYYY-MM-DD)").ask()
-                check_date_format(event_date)  # To check the date format
-                d1 = datetime.strptime(event_date, '%Y-%m-%d')
-                d2 = datetime.strptime(date_to_compare, '%Y-%m-%d')
-                day_difference = (d1 - d2).days
-                print(">>>day_difference", day_difference)
+                print(">>>event_dateincrement", event_date)
+                checked_date = check_date_format(event_date) # To check the date format
+                print(">>>event_dateincrement2", checked_date)
+                day_difference = compare_dates(db, name, checked_date)
+                print(">>>daydiff", day_difference)
                 if day_difference == 1:
                     streak = habit.increment(db)
                     print("streak", streak)
                     habit.add_event(db, event_date)
                     data = get_tracker_data(db, name)
                     print(">>>", data)
+                    print("You completed a daily habit!")
                 elif day_difference > 1:
                     habit.reset()
-                    streak = habit.increment()
+                    habit.streak = 1
+                    print("habitstreak", habit.streak)
                     habit.add_event(db, event_date)
+                    data = get_tracker_data(db, name)
+                    print(">>>", data)
+                elif day_difference == 0:
+                    print("Oops. It looks like you checked off your habit today.")
+                else:
+                    print("Oops. Not a valid date.")
+
+            elif habit_to_increment[0][1] == "weekly": # If frequency is "weekly"
+                print(">>>habitfreq", habit_to_increment[0][1])
+                event_date = questionary.text("Type your date (YYYY-MM-DD)").ask()
+                print(">>>event_dateincrement", event_date)
+                checked_date = check_date_format(event_date)  # To check the date format
+                print(">>>event_dateincrement2", checked_date)
+                day_difference = compare_dates(db, name, checked_date)
+                print(">>>daydiff", day_difference)
+                if 7 <= day_difference < 14:
+                    streak = habit.increment(db)
+                    print("streak", streak)
+                    habit.add_event(db, event_date)
+                    data = get_tracker_data(db, name)
+                    print(">>>", data)
+                    print("You completed a weekly habit!")
+                elif day_difference >= 14:
+                    habit.reset()
+                    habit.streak = 1
+                    habit.add_event(db, event_date)
+                elif day_difference == 0 or day_difference < 7:
+                    print("Looks like you already completed your habit this week.")
+                else:
+                    print("Not a valid date.")
 
         except ValueError:
             main_menu()
@@ -176,6 +205,17 @@ def main_menu():
         stop = True
         exit_habitat()
 
+
+def compare_dates(db, name, event_date):
+
+    data = get_tracker_data(db, name)
+    date_to_compare = data[-1][2]  # Gets the last day logged
+    print(">>>datetocompare", date_to_compare)
+    d1 = datetime.strptime(event_date, '%Y-%m-%d')
+    print("d1", d1)
+    d2 = datetime.strptime(date_to_compare, '%Y-%m-%d')
+    day_difference = (d1 - d2).days
+    return day_difference
 
 def return_to_main():
     main_menu()
