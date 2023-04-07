@@ -24,14 +24,18 @@ def all_habits_same_frequency(db, frequency):
     print(">>>", result)
     return result
 
+
 def longest_streak_of_all(db):
     """
     Returns the longest streak of all defined habits.
     :param db: An initialized sqlite3 database connection.
     :return:
     """
-    data = get_tracker_data(db)
+    names = get_habits_data(db)
+    print(names)
+    data = get_tracker_data()
     return data
+
 
 def longest_streak_of_habit(db, habit_name):
     """

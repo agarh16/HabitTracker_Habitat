@@ -1,11 +1,13 @@
 import sqlite3
 from datetime import datetime
+from test_project import TestHabit
 
 import questionary
 from analysis import *
 
 
 def cli():
+    print("Welcome to Habitat, the place for your habits to call home.")
     stop = False
     while not stop:
         main_menu()
@@ -42,80 +44,41 @@ def main_menu():
     from habit import Habit, delete_habit
     from db import get_db, get_habits_data, get_tracker_data, is_habit_there, check_date_format
 
-    print("Welcome to Habitat, the place for your habits to call home.")
     db = get_db()  # Creates the main database
     choice = questionary.select("What do you want to do today?",
                                 choices=["Create habit", "Increment habit", "Analyse habit(s)", "Delete habit",
                                          "Habitat Walkthrough", "Exit Habitat"]).ask()
 
     if choice == "Create habit":
-        habit_type = questionary.select("Would you like to create a new habit or choose from existing ones?",
-                                        choices=["New Habit", "Predetermined habits", "Back to main menu"]).ask()
-        try:
-            if habit_type == "New Habit":
-                try:
-                    name = questionary.text("What's the name of your habit?",
-                                            validate=lambda text: True if text.isalpha()
-                                            else "Not a valid name. Please only letters.").ask()
-                    frequency = questionary.select("What is the frequency of your habit?",
-                                                   choices=["daily", "weekly"]).ask()
-                    date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD) or use the "
-                                                    "Return key to save the present date.").ask()
-                    habit = Habit(name.casefold(), frequency,
-                                  date_created)  # Casefold to keep all names lower case letters
-                    habit.store(db)
-                    habit.increment(db)
-                    habit.add_event(db, date_created)
-                    print("Your habit was saved.")
-                    print(">>> get_habits_data(db)", get_habits_data(db))
-                    print(">>> get_tracker_data(db, name)", get_tracker_data(db, name))
-                except NameError:  # In case the user doesn't input a name
-                    print("Your habit was not saved because it doesn't have a name.")
-                    main_menu()
-                except ValueError:  # In case the date_created doesn't match the format YYYY-MM-DD
-                    main_menu()
+        habit_type = questionary.select("Would you like to create a new habit?", choices=["New Habit", "Back to main menu"]).ask()
 
-            elif habit_type == "Predetermined habits":
-                predetermined_habit = questionary.select("Select one:", choices=["exercising", "reading",
-                                                                                 "writing", "coding",
-                                                                                 "grocery shopping",
-                                                                                 "Back to main menu"]).ask()
-                if predetermined_habit == "grocery shopping":
-                    frequency = "weekly"
-                    print("You chose a weekly habit.")
-                    try:
-                        date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD) or use "
-                                                        "the Return key to add the present day").ask()
-                        habit = Habit(predetermined_habit, frequency, date_created)
-                        habit.store(db)
-                        habit.increment(db)
-                        habit.add_event(db, date_created)
-                        print(">>> habit table", get_habits_data(db))
-                        print(">>> tracker", get_tracker_data(db, habit.name))
-                        print("Your habit has been saved.")
-                    except ValueError:  # In case the date_created doesn't match the format YYYY-MM-DD
-                        main_menu()
-                elif predetermined_habit == "exercising" or predetermined_habit == "reading" or \
-                        predetermined_habit == "writing" or predetermined_habit == "coding":
-                    frequency = "daily"
-                    print("You chose a daily habit.")
-                    try:
-                        date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD)").ask()
-                        habit = Habit(predetermined_habit, frequency, date_created)
-                        habit.store(db)
-                        habit.increment(db)
-                        habit.add_event(db, date_created)
-                        print(">>> habit table", get_habits_data(db))
-                        print(">>> tracker table", get_tracker_data(db, habit.name))
-                        print("Your habit has been saved.")
-                    except ValueError: # In case the date_created doesn't match the format YYYY-MM-DD
-                        main_menu()
-                else:
-                    main_menu()
-            else:
+        if habit_type == "New Habit":
+            try:
+                name = questionary.text("What's the name of your habit?",
+                                        validate=lambda text: True if text.isalpha()
+                                        else "Not a valid name. Please only letters.").ask()
+                frequency = questionary.select("What is the frequency of your habit?",
+                                               choices=["daily", "weekly"]).ask()
+                date_created = questionary.text("Type the first date of your new habit: (YYYY-MM-DD) or use the "
+                                                "Return key to save the present date.").ask()
+                habit = Habit(name.casefold(), frequency,
+                              date_created)  # Casefold to keep all names lower case letters
+                habit.store(db)
+                habit.increment(db)
+                habit.add_event(db, date_created)
+                print("Your habit was saved.")
+                print(">>> get_habits_data(db)", get_habits_data(db))
+                print(">>> get_tracker_data(db, name)", get_tracker_data(db, name))
+            except NameError:  # In case the user doesn't input a name
+                print("Your habit was not saved because it doesn't have a name.")
                 main_menu()
-        except sqlite3.IntegrityError:  # Does not allow two habits with the same name
-            print("You already have a habit with this name. Try again.")
+            except ValueError:  # In case the date_created doesn't match the format YYYY-MM-DD
+                main_menu()
+            except sqlite3.IntegrityError:  # Does not allow two habits with the same name
+                print("You already have a habit with this name. Try again.")
+                main_menu()
+        else:
+            main_menu()
 
     elif choice == "Increment habit":
         name = questionary.text("What's the name of your habit?").ask()
@@ -175,12 +138,10 @@ def main_menu():
                     print("Looks like you already completed your habit this week.")
                 else:
                     print("Not a valid date.")
-
         except ValueError:
             main_menu()
         except NameError:
             main_menu()
-
         else:
             main_menu()
 
@@ -214,6 +175,9 @@ def main_menu():
                 print(f"Habit {name} deleted.")
         except NameError:
             main_menu()
+
+    elif choice == "Habitat Walkthrough":
+        pass
 
     else:
         stop = True
