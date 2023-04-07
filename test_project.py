@@ -2,8 +2,8 @@ import pytest
 
 from db import *
 from habit import Habit, delete_habit
-from db import is_habit_there, get_tracker_data, get_habits_data
-from analysis import all_habits, all_habits_same_frequency, longest_streak_of_all, longest_streak_of_habit
+from db import is_habit_there, get_habits_data
+from analysis import all_habits_same_frequency, longest_streak_of_all, longest_streak_of_habit
 
 
 class TestHabit:
@@ -82,6 +82,9 @@ class TestHabit:
         Tests the analysis module on the tracker table.
         :return:
         """
+        assert longest_streak_of_all(self.db) == ("ballet", 7)
+        assert longest_streak_of_habit(self.db, "piano") == ("piano", 3)
+        assert longest_streak_of_habit(self.db, "writing") == ("writing", 5)
 
 
     def teardown_method(self):

@@ -30,7 +30,6 @@ class Habit:
             return self.streak
         else:
             self.streak = data[-1][-1]
-            print(">>>self.streak", self.streak)
             self.streak += 1
             return self.streak
 

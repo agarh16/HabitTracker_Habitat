@@ -1,4 +1,4 @@
-from db import get_tracker_data, get_habits_data, get_db
+from db import get_habits_data, get_all_streaks, get_streak_data
 
 
 def all_habits(db):
@@ -19,9 +19,7 @@ def all_habits_same_frequency(db, frequency):
     :return:
     """
     data = get_habits_data(db)
-    print(">>>get_habits_data", get_habits_data(db))
     result = list(filter(lambda x: frequency in x, data))
-    print(">>>", result)
     return result
 
 
@@ -31,17 +29,18 @@ def longest_streak_of_all(db):
     :param db: An initialized sqlite3 database connection.
     :return:
     """
-    names = get_habits_data(db)
-    print(names)
-    data = get_tracker_data()
-    return data
+    data = get_all_streaks(db)
+    max_streak = max(data, key=lambda x: x[1])
+    return max_streak
 
 
 def longest_streak_of_habit(db, habit_name):
     """
     Returns the longest streak of a given habit.
     :param db: An initialized sqlite3 database connection.
+    :param habit_name: Name of the habit for search.
     :return:
     """
-    data = get_tracker_data(db, habit_name)
-    return data
+    data = get_streak_data(db, habit_name)
+    max_streak = max(data, key=lambda x: x[1])
+    return max_streak

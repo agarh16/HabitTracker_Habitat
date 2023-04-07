@@ -31,7 +31,7 @@ pip install -r requirements.txt
 
 ## Usage 
 
-After installing the packages requires start the program with: 
+After installing the packages,  requires start the program with: 
 ```
 python main.py
 ```

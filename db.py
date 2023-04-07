@@ -106,7 +106,7 @@ def get_streak_data(db, name):
     :return: A list of tuples. One for each logged increment.
     """
     cur = db.cursor()
-    cur.execute("SELECT streak FROM tracker WHERE name=?", (name, ))
+    cur.execute("SELECT name, streak FROM tracker WHERE name=?", (name, ))
     return cur.fetchall()
 
 
@@ -119,6 +119,18 @@ def get_frequency(db, name):
     """
     cur = db.cursor()
     cur.execute("SELECT frequency FROM habit WHERE name=?", (name,))
+    return cur.fetchall()
+
+
+def get_all_streaks(db):
+    """
+        Gets the logged streaks of all habits from the tracker table.
+        :param db: An initialized sqlite3 database connection.
+        :param : Name of the habit for the search.
+        :return:
+        """
+    cur = db.cursor()
+    cur.execute("SELECT name, streak FROM tracker")
     return cur.fetchall()
 
 
@@ -144,14 +156,11 @@ def check_date_format(event_date=None):
     """
     if not event_date:
         event_date = datetime.today().strftime('%Y-%m-%d')
-        print(">>> eventdate", event_date)
         return event_date
     else:
         try:
-            print(">>> eventdate", event_date)
             event_date = datetime.strptime(event_date, '%Y-%m-%d')
             event_date_string = event_date.strftime('%Y-%m-%d')
-              # To return a date instance without the time
             return event_date_string
         except ValueError:
             print("Not a valid date. Try this format: YYYY-MM-DD.")
