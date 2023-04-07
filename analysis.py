@@ -16,6 +16,7 @@ def all_habits_same_frequency(db, frequency):
     """
     Returns all the habits with the same frequency from the habits table (daily or weekly).
     :param db: An initialized sqlite3 database connection.
+    :param frequency: Frequency for the search.
     :return:
     """
     data = get_habits_data(db)

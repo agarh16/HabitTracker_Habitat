@@ -70,7 +70,7 @@ def increment_habit(db, name, streak: int, event_date: date = None):
     if not event_date:
         event_date = date.today()
     else:
-        check_date_format(event_date) # To check if the user gave the correct date format
+        check_date_format(event_date)  # To check if the user gave the correct date format
 
     cur.execute("INSERT INTO tracker VALUES(?, ?, ?)", (name, streak, event_date))
     db.commit()
@@ -98,6 +98,7 @@ def get_tracker_data(db, name):
     cur.execute("SELECT * FROM tracker WHERE name=?", (name,))
     return cur.fetchall()
 
+
 def get_streak_data(db, name):
     """
     Gets the logged streaks from the tracker table.
@@ -106,7 +107,7 @@ def get_streak_data(db, name):
     :return: A list of tuples. One for each logged increment.
     """
     cur = db.cursor()
-    cur.execute("SELECT name, streak FROM tracker WHERE name=?", (name, ))
+    cur.execute("SELECT name, streak FROM tracker WHERE name=?", (name,))
     return cur.fetchall()
 
 
@@ -176,11 +177,9 @@ def is_habit_there(db, name):
     """
     data = get_habits_data(db)  # list of all tuples
     habit_to_search = (list(filter(lambda x: x[0] == name.casefold(),
-                                       data)))  # Compares all habits names in the table with the name variable
+                                   data)))  # Compares all habits names in the table with the name variable
     if habit_to_search:
         return habit_to_search
     else:
         print("There is no habit with this name.")
         raise NameError
-
-

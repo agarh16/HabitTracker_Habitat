@@ -51,7 +51,7 @@ class Habit:
         """
         add_habit(db, self.name, self.frequency, self.date_created)
 
-    def add_event(self, db, event_date: date= None):
+    def add_event(self, db, event_date: date = None):
         """
         If the habit was not broken then the increment_streak will be added to the one logged in the tracker table.
         If the habit is broken then the streak will result in 1, and it will be logged as such in the tracker table.
@@ -64,7 +64,6 @@ class Habit:
         """
         increment_habit(db, self.name, self.streak, event_date)
 
-
     def delete_habit(self, db, name):
         """
         Deletes a habit.
@@ -72,5 +71,3 @@ class Habit:
         :param name: Name of the habit that will be deleted.
         """
         delete_habit(db, name)
-
-

@@ -1,5 +1,4 @@
 import pytest
-
 from db import *
 from habit import Habit, delete_habit
 from db import is_habit_there, get_habits_data
@@ -16,7 +15,6 @@ class TestHabit:
         increment_habit(self.db, "piano", 1, "2015-01-18")
         increment_habit(self.db, "piano", 1, "2015-02-01")
         increment_habit(self.db, "piano", 2, "2015-02-08")
-
 
         add_habit(self.db, "writing", "daily", "2014-09-08")
         increment_habit(self.db, "writing", 2, "2014-09-09")
@@ -42,7 +40,6 @@ class TestHabit:
         increment_habit(self.db, "reading", 1, "2015-01-07")
         increment_habit(self.db, "reading", 1, "2015-02-02")
 
-
         add_habit(self.db, "ballet", "weekly", "2014-11-10")
         increment_habit(self.db, "ballet", 2, "2014-11-17")
         increment_habit(self.db, "ballet", 3, "2014-11-24")
@@ -66,7 +63,6 @@ class TestHabit:
             delete_habit(self.db, "reading")
             is_habit_there(self.db, "reading")
 
-
     def test_db_habit(self):
         """
         Tests the analysis module on the habit table.
@@ -76,7 +72,6 @@ class TestHabit:
         assert len(all_habits_same_frequency(self.db, 'daily')) == 3
         assert len(all_habits_same_frequency(self.db, 'weekly')) == 2
 
-
     def test_db_tracker(self):
         """
         Tests the analysis module on the tracker table.
@@ -85,7 +80,6 @@ class TestHabit:
         assert longest_streak_of_all(self.db) == ("ballet", 7)
         assert longest_streak_of_habit(self.db, "piano") == ("piano", 3)
         assert longest_streak_of_habit(self.db, "writing") == ("writing", 5)
-
 
     def teardown_method(self):
         import os
