@@ -19,14 +19,20 @@ class Habit:
 
     def increment(self, db):
         """
-        This function increments the checked attribute by 1.
-
+        Gets the last streak number from the tracker table and increments by 1 if it meets the condition of a habit.
+        :param db: An initialized sqlite3 database connection.
+        :return: the streak as an int.
         """
+
         data = get_streak_data(db, self.name)
-        self.streak = data[-1][-1]
-        print(">>>self.streak", self.streak)
-        self.streak += 1
-        return self.streak
+        if not data:
+            self.streak = 1
+            return self.streak
+        else:
+            self.streak = data[-1][-1]
+            print(">>>self.streak", self.streak)
+            self.streak += 1
+            return self.streak
 
     def reset(self):
         """
@@ -46,12 +52,12 @@ class Habit:
         """
         add_habit(db, self.name, self.frequency, self.date_created)
 
-    def add_event(self, db, event_date: date = None):
+    def add_event(self, db, event_date: date= None):
         """
         If the habit was not broken then the increment_streak will be added to the one logged in the tracker table.
-        If the habit is broken then the streak will result in 1 and it will be logged as such in the tracker table.
+        If the habit is broken then the streak will result in 1, and it will be logged as such in the tracker table.
         A broken daily habit means that the habit was not logged on a consecutive day.
-        A broken weekly habit means that the habit was not logged in the consecutive week.
+        A broken weekly habit means that the habit was not logged on the consecutive week.
         The information is logged in the tracker table.
         :param db: An initialized sqlite3 database connection.
         :param event_date: The date in which a habit is checked off.

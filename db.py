@@ -1,10 +1,10 @@
 import sqlite3
-from datetime import datetime, date
+from datetime import date, datetime
 
 
 def get_db(name="main.db"):
     """
-    Creates the database. As a default it creates the "main" database.
+    Creates the database and tables (habit and tracker). As a default it creates the "main" database.
     :param name: Name of the database.
     :return: A database
     """
@@ -39,11 +39,11 @@ def create_tables(db):
 
 def add_habit(db, name, frequency, date_created: date):
     """
-
+    Stores the habit in the habit table. If there is no date given, the program enters the present day.
     :param db: An initialized sqlite3 database connection.
-    :param name:
-    :param frequency:
-    :param date_created:
+    :param name: Habit name
+    :param frequency: Habit frequency (daily or weekly)
+    :param date_created: Date given by the user or set automatically if there is no user input.
     :return:
     """
     cur = db.cursor()
@@ -59,7 +59,7 @@ def add_habit(db, name, frequency, date_created: date):
 
 def increment_habit(db, name, streak: int, event_date: date = None):
     """
-
+    Logs the streak and date of the habits. If there is no date given, the program enters the present day.
     :param db: An initialized sqlite3 database connection.
     :param name:
     :param streak:
@@ -70,7 +70,7 @@ def increment_habit(db, name, streak: int, event_date: date = None):
     if not event_date:
         event_date = date.today()
     else:
-        check_date_format(event_date)
+        check_date_format(event_date) # To check if the user gave the correct date format
 
     cur.execute("INSERT INTO tracker VALUES(?, ?, ?)", (name, streak, event_date))
     db.commit()
@@ -78,9 +78,9 @@ def increment_habit(db, name, streak: int, event_date: date = None):
 
 def get_habits_data(db):
     """
-
+    Gets the all the habits, frequency and date created from the table habit.
     :param db: An initialized sqlite3 database connection.
-    :return:
+    :return: A list with all the habits, frequencies and dates created as a tuple for each.
     """
     cur = db.cursor()
     cur.execute("SELECT * FROM habit")
@@ -89,54 +89,44 @@ def get_habits_data(db):
 
 def get_tracker_data(db, name):
     """
-
+    Gets the logs from the tracker table from a given habit.
     :param db: An initialized sqlite3 database connection.
-    :param name:
-    :return:
+    :param name: Name of the habit for the search
+    :return: A list of all the logs of  agiven habit.
     """
     cur = db.cursor()
     cur.execute("SELECT * FROM tracker WHERE name=?", (name,))
     return cur.fetchall()
 
-
-# def get_streak_data(db, name):
-#     cur = db.cursor()
-#     cur.execute("SELECT * FROM streak WHERE name=?", (name,))
-#     return cur.fetchall()
-
-# def get_same_frequency_data(db, frequency):
-#     """
-#
-#     :param db: An initialized sqlite3 database connection.
-#     :param frequency:
-#     :return:
-#     """
-#     cur = db.cursor()
-#     cur.execute("SELECT * FROM tracker WHERE frequency=?", (frequency,))
-#     return cur.fetchall()
+def get_streak_data(db, name):
+    """
+    Gets the logged streaks from the tracker table.
+    :param db: An initialized sqlite3 database connection.
+    :param name: Name of the habit for the search.
+    :return: A list of tuples. One for each logged increment.
+    """
+    cur = db.cursor()
+    cur.execute("SELECT streak FROM tracker WHERE name=?", (name, ))
+    return cur.fetchall()
 
 
-# def get_longest_streak_of_all(db, date):
-#     """
-#
-#     :param db: An initialized sqlite3 database connection.
-#     :param name:
-#     :return: returns the
-#     """
-#     cur = db.cursor()
-#     cur.execute("SELECT * FROM tracker WHERE date=?", (date,))
-#     return cur.fetchall()
-#
-# def get_longest_streak_of_habit(db, date, habit_name):
-#     cur = db.cursor()
-#     cur.execute("SELECT * FROM tracker WHERE date=?", (date, habit_name))
-#     return cur.fetchall()
+def get_frequency(db, name):
+    """
+    Gets the logged frequency of the habits from the habit table.
+    :param db: An initialized sqlite3 database connection.
+    :param name: Name of the habit for the search.
+    :return:
+    """
+    cur = db.cursor()
+    cur.execute("SELECT frequency FROM habit WHERE name=?", (name,))
+    return cur.fetchall()
+
 
 def delete_habit(db, name):
     """
-
+    Deletes a selected habit from the habit and tracker tables.
     :param db: An initialized sqlite3 database connection.
-    :param name:
+    :param name: Name of the habit for the search.
     :return:
     """
     cur = db.cursor()
@@ -147,25 +137,30 @@ def delete_habit(db, name):
 
 
 def check_date_format(event_date=None):
+    """
+
+    :param event_date:
+    :return:
+    """
     if not event_date:
         event_date = datetime.today().strftime('%Y-%m-%d')
-
-        #event_date = event_date.date()
-        print("eventdate", event_date)
+        print(">>> eventdate", event_date)
         return event_date
     else:
         try:
-            print("eventdate", event_date)
+            print(">>> eventdate", event_date)
             event_date = datetime.strptime(event_date, '%Y-%m-%d')
-            event_date = event_date.date()  # To return a date instance without the time
-            return event_date
+            event_date_string = event_date.strftime('%Y-%m-%d')
+              # To return a date instance without the time
+            return event_date_string
         except ValueError:
             print("Not a valid date. Try this format: YYYY-MM-DD.")
             raise ValueError
 
+
 def is_habit_there(db, name):
     """
-
+    Checks it the habit exists in the habit table.
     :param db: An initialized sqlite3 database connection.
     :param name: Name of the habit to check if exists.
     :return: The habit that matches with the name as a tuple inside a list.
@@ -180,19 +175,3 @@ def is_habit_there(db, name):
         raise NameError
 
 
-def get_streak_data(db, name):
-    """
-    Gets the streaks from the tracker table
-    :param db:
-    :param name:
-    :return:
-    """
-    cur = db.cursor()
-    cur.execute("SELECT streak FROM tracker WHERE name=?", (name, ))
-    return cur.fetchall()
-
-
-def get_frequency(db, name):
-    cur = db.cursor()
-    cur.execute("SELECT frequency FROM habit WHERE name=?", (name,))
-    return cur.fetchall()
