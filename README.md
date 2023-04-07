@@ -20,26 +20,39 @@ Habitat lets you:
 
 ## Instalation
 
-To run this program you will need two packages:
+Open your Terminal/Command window and check if you have the latest pip version installed. 
+On Mac, for example, type on your Terminal:
 
-Pytest - To run some tests
+```
+python3 -m pip --version 
+```
+To upgrade pip to the latest version type:
 
-Questionary - For a cleaner CLI
 ```
-pip install -r requirements.txt
+python -m pip install --upgrade pip
 ```
+
+Once you have your latest pip version, go to the downloaded folder through your Terminal and type:
+
+```
+pip3 install -r requirements.txt
+```
+
+This should download the two packages to run the program:
+- Pytest - To run some tests
+- Questionary - For a cleaner CLI
 
 ## Usage 
 
-After installing the packages, go to the HabitTracker folder and type:
+After installing the packages type:
 ```
 python3 main.py
 ```
-Follow the instructions on screen. 
+and follow the instructions on screen. 
 
 ## Test suite
 
-To run the tests go to the HabitTracker folder through your terminal and type:  
+To run the tests go to the downloaded HabitTracker_Habitat-master folder through your terminal and type:  
 ```
-pytest . 
+python3 -m pytest . 
 ```
