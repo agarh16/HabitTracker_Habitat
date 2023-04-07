@@ -92,7 +92,7 @@ def get_tracker_data(db, name):
     Gets the logs from the tracker table from a given habit.
     :param db: An initialized sqlite3 database connection.
     :param name: Name of the habit for the search
-    :return: A list of all the logs of  agiven habit.
+    :return: A list of all the logs of  a given habit.
     """
     cur = db.cursor()
     cur.execute("SELECT * FROM tracker WHERE name=?", (name,))

@@ -2,15 +2,15 @@
 
 Welcome to **Habitat**, the place for your habits to call home. 
 
-This  *little habit tracker*  lets you manage your habits, being new habits or predefined ones.
-It also offers a way to see your how serious you are about maintaining them. 
+This  *little habit tracker*  lets you manage your habits.
+It also offers a way to see how serious you are about maintaining them. 
 Building good habits is hard and hopefully this program will help you.
 
 ## Features
 Habitat lets you:
 
-- Create a new habit or chose from predefined ones.
-- Increment your habits or mark as completed for the day or the week.
+- Create new habit.
+- Increment your habits for the day or the week.
 - Analyse your habits:
   - Lists all your habits.
   - Show all habits with the same frequency.
@@ -20,7 +20,7 @@ Habitat lets you:
 
 ## Instalation
 
-To be able to run this program you will need two packages:
+To run this program you will need two packages:
 
 Pytest - To run some tests
 
@@ -31,15 +31,15 @@ pip install -r requirements.txt
 
 ## Usage 
 
-After installing the packages,  requires start the program with: 
+After installing the packages, go to the HabitTracker folder and type:
 ```
-python main.py
+python3 main.py
 ```
-and follow the instructions on screen. 
+Follow the instructions on screen. 
 
-## Tests
+## Test suite
 
-To run the tests you need to go to the test_project 
+To run the tests go to the HabitTracker folder through your terminal and type:  
 ```
 pytest . 
 ```

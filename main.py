@@ -53,6 +53,7 @@ def main_menu():
 
         if habit_type == "New Habit":
             try:
+                print("These are your saved habits", *get_habits_data(db), sep='\n')
                 name = questionary.text("What's the name of your habit?",
                                         validate=lambda text: True if text.isalpha()
                                         else "Not a valid name. Please only letters.").ask()
@@ -101,18 +102,16 @@ def main_menu():
                     if day_difference == 1:
                         habit.increment(db)
                         habit.add_event(db, checked_date)
-                        print("You completed a daily habit!. Looks like you are on a streak...")
-                        print(get_tracker_data(db, name)[-1])
+                        print("You completed a daily habit!. Looks like you are on a streak...", get_tracker_data(db, name)[-1])
                     elif day_difference > 1:
                         habit.reset()
                         habit.streak = 1
                         habit.add_event(db, checked_date)
-                        print("You completed a daily habit!")
-                        print(get_tracker_data(db, name)[-1])
+                        print("You completed a daily habit!", get_tracker_data(db, name)[-1])
                     elif day_difference == 0:
-                        print("Oops. It looks like you checked off your habit today.")
+                        print("Oops. It looks like you checked off your habit today. Your last increment was: ", get_tracker_data(db, name)[-1])
                     else:
-                        print("Oops. Not a valid date.")
+                        print("Oops. Not a valid date. Your last increment was: ", get_tracker_data(db, name)[-1])
 
                 elif habit_to_increment[0][1] == "weekly": # If frequency is "weekly"
                     event_date = questionary.text("Type your date (YYYY-MM-DD) or use the Return key to add the present"
@@ -131,9 +130,9 @@ def main_menu():
                         habit.add_event(db, checked_date)
                         print("You completed a weekly habit!", get_tracker_data(db, name)[-1])
                     elif day_difference == 0 or day_difference < 7:
-                        print("Looks like you already completed your habit this week.")
+                        print("Looks like you already completed your habit this week. Your last increment was: ", get_tracker_data(db, name)[-1])
                     else:
-                        print("Not a valid date.")
+                        print("Not a valid date. Your last increment was: ", get_tracker_data(db, name)[-1])
             except ValueError:
                 main_menu()
             except NameError:
