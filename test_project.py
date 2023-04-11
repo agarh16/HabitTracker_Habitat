@@ -7,6 +7,10 @@ from analysis import all_habits_same_frequency, longest_streak_of_all, longest_s
 
 class TestHabit:
     def setup_method(self):
+        """
+        To test the connection to the database.
+        :return:
+        """
         self.db = get_db("test.db")
         add_habit(self.db, "piano", "weekly", "2014-12-11")
         increment_habit(self.db, "piano", 2, "2014-12-18")
@@ -49,6 +53,10 @@ class TestHabit:
         increment_habit(self.db, "ballet", 7, "2014-12-22")
 
     def test_habit(self):
+        """
+        To test the habit class.
+        :return:
+        """
         habit1 = Habit("test_1", "weekly", "2015-12-12")  # With date
         habit2 = Habit("test_2", "daily", None)  # Without date
         habit1.increment(self.db)
@@ -59,6 +67,10 @@ class TestHabit:
         assert habit2.streak == 1
 
     def test_delete_habit(self):
+        """
+        To test the delete function of the habit class.
+        :return:
+        """
         with pytest.raises(NameError):
             delete_habit(self.db, "reading")
             is_habit_there(self.db, "reading")
@@ -82,5 +94,9 @@ class TestHabit:
         assert longest_streak_of_habit(self.db, "writing") == ("writing", 5)
 
     def teardown_method(self):
+        """
+        Removes the test database.
+        :return:
+        """
         import os
         os.remove("test.db")
