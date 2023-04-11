@@ -32,7 +32,7 @@ To upgrade pip to the latest version type:
 python -m pip install --upgrade pip
 ```
 
-Once you have your latest pip version, go to the downloaded folder through your Terminal and type:
+Once you have your latest pip version, go to the downloaded folder Habitat_OOFPP-master through your Terminal and type:
 
 ```
 pip3 install -r requirements.txt
@@ -52,7 +52,7 @@ and follow the instructions on screen.
 
 ## Test suite
 
-To run the tests go to the downloaded HabitTracker_Habitat-master folder through your terminal and type:  
+To run the tests go to the downloaded Habitat_OOFPP-master folder through your terminal and type:  
 ```
 python3 -m pytest . 
 ```
