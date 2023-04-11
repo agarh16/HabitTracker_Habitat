@@ -53,7 +53,7 @@ def main_menu():
 
         if habit_type == "New Habit":
             try:
-                print("These are your saved habits", *get_habits_data(db), sep='\n')
+                print("These are your saved habits:", *get_habits_data(db), sep='\n')
                 name = questionary.text("What's the name of your habit?",
                                         validate=lambda text: True if text.isalpha()
                                         else "Not a valid name. Please only letters.").ask()
@@ -67,8 +67,7 @@ def main_menu():
                 habit.increment(db)
                 habit.add_event(db, date_created)
                 print("Your habit was saved.")
-                # print(">>> get_habits_data(db)", get_habits_data(db))
-                # print(">>> get_tracker_data(db, name)", get_tracker_data(db, name))
+                print("These are your habits now:", *all_habits(db), sep='\n')
             except NameError:  # In case the user doesn't input a name
                 print("Your habit was not saved because it doesn't have a name.")
                 main_menu()
@@ -88,17 +87,12 @@ def main_menu():
         else:
             try:
                 habit_to_increment = is_habit_there(db, name)  # To check if habit exists
-                # print(">>> habit_to_increment", habit_to_increment)
                 habit = Habit(habit_to_increment[0][0], habit_to_increment[0][1], habit_to_increment[0][2])
-                # print(">>> habit name", habit)
                 if habit_to_increment[0][1] == "daily":  # If True and frequency is daily
                     event_date = questionary.text("Type your date (YYYY-MM-DD) or use the Return key to add the present"
-                                                  "day.").ask()
-                    # print(">>> event_date_increment", event_date)
+                                                  " day.").ask()
                     checked_date = check_date_format(event_date)  # To check the date format
-                    # print(">>> event_date increment2", checked_date)
                     day_difference = compare_dates(db, name, checked_date)
-                    # print(">>> day_diff", day_difference)
                     if day_difference == 1:
                         habit.increment(db)
                         habit.add_event(db, checked_date)
@@ -153,7 +147,8 @@ def main_menu():
         elif analyse == "Longest streak of all habits":
             print(longest_streak_of_all(db))
         elif analyse == "Longest streak of a given habit":
-            habit_name = questionary.text("Type the name of your habit.").ask()
+            print("These are your saved habits:", *get_habits_data(db), sep='\n')
+            habit_name = questionary.text("Type the name of your habit:").ask()
             print(longest_streak_of_habit(db, habit_name))
         else:
             main_menu()
@@ -189,9 +184,7 @@ def compare_dates(db, name, event_date):
 
     data = get_tracker_data(db, name)
     date_to_compare = data[-1][2]  # Gets the last day logged
-    # print(">>>date_to_compare", date_to_compare)
     d1 = datetime.strptime(event_date, '%Y-%m-%d')
-    # print("d1", d1)
     d2 = datetime.strptime(date_to_compare, '%Y-%m-%d')
     day_difference = (d1 - d2).days
     return day_difference
